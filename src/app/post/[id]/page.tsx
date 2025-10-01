@@ -7,19 +7,20 @@ import CreateFeedback from '@/components/CreateFeedback'
 
 export const dynamic = 'force-dynamic'
 
-export default async function PostPage({ params }: { params: { id: string } }) {
+export default async function PostPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const supabase = createServerComponentClient({ cookies })
-  
+
   const { data: post } = await supabase
     .from('posts')
     .select()
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
 
   const { data: feedbacks } = await supabase
     .from('feedbacks')
     .select()
-    .eq('post_id', params.id)
+    .eq('post_id', id)
 
   return (
     <div className="w-full max-w-2xl mx-auto p-4">
@@ -29,7 +30,7 @@ export default async function PostPage({ params }: { params: { id: string } }) {
       <hr className="my-8" />
 
       {/* 피드백 작성 폼 */}
-      <CreateFeedback postId={params.id} />
+      <CreateFeedback postId={id} />
 
       {/* 피드백 목록 */}
       <div className="mt-8">
