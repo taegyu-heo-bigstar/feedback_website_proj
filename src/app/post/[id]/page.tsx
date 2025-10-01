@@ -7,13 +7,7 @@ import CreateFeedback from '@/components/CreateFeedback'
 
 export const dynamic = 'force-dynamic'
 
-type PostPageProps = {
-  params: {
-    id: string
-  }
-}
-
-export default async function PostPage({ params }: PostPageProps) {
+export default async function PostPage({ params }: { params: { id: string } }) {
   const supabase = createServerComponentClient({ cookies })
   
   const { data: post } = await supabase
