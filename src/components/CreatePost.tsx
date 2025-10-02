@@ -8,7 +8,11 @@ export default function CreatePost({ userId }: { userId: string }) {
   const supabase = createClient()
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-// ... existing code ...
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
@@ -17,4 +21,42 @@ export default function CreatePost({ userId }: { userId: string }) {
     setLoading(false)
     if (error) {
       setError(error.message)
-// ... existing code ...
+    } else {
+      setTitle('')
+      setContent('')
+      setSuccess(true)
+      // 페이지를 새로고침하여 새 글을 반영합니다.
+      window.location.reload()
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-4 border rounded-md mb-8">
+      <h2 className="text-xl font-bold">글 작성</h2>
+      <input
+        type="text"
+        placeholder="제목"
+        value={title}
+        onChange={e => setTitle(e.target.value)}
+        className="border p-2 rounded"
+        required
+      />
+      <textarea
+        placeholder="내용"
+        value={content}
+        onChange={e => setContent(e.target.value)}
+        className="border p-2 rounded"
+        required
+      />
+      {error && <div className="text-red-500 text-sm">{error}</div>}
+      {success && <div className="text-green-500 text-sm">글이 등록되었습니다!</div>}
+      <button
+        type="submit"
+        className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+        disabled={loading}
+      >
+        {loading ? '등록 중...' : '등록'}
+      </button>
+    </form>
+  )
+}
