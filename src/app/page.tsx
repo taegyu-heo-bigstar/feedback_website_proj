@@ -42,7 +42,7 @@ export default async function Index() {
         </div>
 
         {/* 로그인한 사용자에게만 글 작성 폼을 보여줍니다. */}
-        <CreatePost />
+        <CreatePost userId={session.user.id} />
 
         <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent">
           <div className="flex flex-col gap-4">
