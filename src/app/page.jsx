@@ -1,25 +1,13 @@
-// src/app/page.tsx (2일차 최종 복원 코드)
+// src/app/page.jsx
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import Link from 'next/link'
-import LogoutButton from '@/components/LogoutButton'
-import CreatePost from '@/components/CreatePost'
-import ErrorBoundary from '@/components/ErrorBoundary'
+import CreatePost from '@/components/CreatePost.jsx'
 
 export const dynamic = 'force-dynamic'
 
-import { redirect } from 'next/navigation'
-
 export default async function Index() {
   const supabase = createServerComponentClient({ cookies })
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
-
-  if (!session) {
-    redirect('/landing')
-  }
-
   const { data: posts } = await supabase.from('posts').select('*')
 
   return (
@@ -28,10 +16,7 @@ export default async function Index() {
         <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm text-foreground">
           <div></div>
           <div>
-            <div className="flex items-center gap-4">
-              Hey, {session.user.email}
-              <LogoutButton />
-            </div>
+            {/* Nickname display can go here later */}
           </div>
         </div>
       </nav>
@@ -42,24 +27,24 @@ export default async function Index() {
           <p className="text-lg">Give and receive feedback on any topic.</p>
         </div>
 
-        <ErrorBoundary>
-          <CreatePost userId={session.user.id} />
-        </ErrorBoundary>
+        <CreatePost />
 
         <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent">
           <div className="flex flex-col gap-4">
             {posts?.map((post) => (
-              <Link key={post.id} href={`/post/${post.id}`} className="hover:bg-gray-800/50 block">
-                <div className="p-4 border-b border-b-foreground/10">
-                    <h3 className="font-bold text-lg">{post.title}</h3>
-                    <p className="mt-2 text-sm">{post.content}</p>
-                </div>
+              <Link
+                key={post.id}
+                href={`/post/${post.id}`}
+                className="block p-4 border rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
+              >
+                <h2 className="text-xl font-semibold">{post.title}</h2>
+                <p className="text-sm text-gray-500">by {post.nickname || 'Anonymous'}</p>
               </Link>
             ))}
             {posts?.length === 0 && (
-                <div className="p-4 text-center text-gray-500">
-                    No posts yet. Be the first to create one!
-                </div>
+              <div className="text-center text-gray-500">
+                <p>아직 게시물이 없습니다.</p>
+              </div>
             )}
           </div>
         </div>
