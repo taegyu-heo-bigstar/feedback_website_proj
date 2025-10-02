@@ -36,17 +36,29 @@ export default async function Index() {
       </nav>
 
       <div className="animate-in flex flex-col gap-14 opacity-0 max-w-4xl px-3 py-16 lg:py-24 text-foreground">
+        // src/app/page.tsx
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+// ... existing code ...
+import LogoutButton from '@/components/LogoutButton'
+import CreatePost from '@/components/CreatePost'
+import ErrorBoundary from '@/components/ErrorBoundary'
+
+export const dynamic = 'force-dynamic'
+// ... existing code ...
         <div className="flex flex-col items-center mb-4 lg:mb-12">
           <h1 className="text-4xl font-bold mb-4">Feedback Board</h1>
           <p className="text-lg">Give and receive feedback on any topic.</p>
         </div>
 
         {/* 로그인한 사용자에게만 글 작성 폼을 보여줍니다. */}
-        <CreatePost userId={session.user.id} />
+        <ErrorBoundary>
+          <CreatePost userId={session.user.id} />
+        </ErrorBoundary>
 
         <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent">
           <div className="flex flex-col gap-4">
             {posts?.map((post) => (
+// ... existing code ...
               <Link key={post.id} href={`/post/${post.id}`} className="hover:bg-gray-800/50 block">
                 <div className="p-4 border-b border-b-foreground/10">
                     <h3 className="font-bold text-lg">{post.title}</h3>
